@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "bootstrap": "^5.0.0-alpha1",
+    "font-awesome": "^4.7.0",
+    "node-sass": "^4.14.1",
+    "popper.js": "^1.16.1",
+    "sass-loader": "^8.0.0"
+  }
+}

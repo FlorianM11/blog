@@ -1,0 +1,20 @@
+.articles {
+    padding: 10px;
+}
+
+.articles h1 {
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.articles .meta-data {
+    color: #666;
+    font-size: 0.7rem;
+    margin-top: -15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.articles p {
+    padding: 10px;
+}
