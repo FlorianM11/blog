@@ -14,24 +14,51 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-new_branch',
+    'version' => 'dev-new_branch',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => 'b0c240d0cb997cc8c4cffa84fcd716a36c5bad91',
     'name' => 'dwaps/tp-php',
   ),
   'versions' => 
   array (
     'dwaps/tp-php' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-new_branch',
+      'version' => 'dev-new_branch',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => 'b0c240d0cb997cc8c4cffa84fcd716a36c5bad91',
+    ),
+    'graham-campbell/result-type' => 
+    array (
+      'pretty_version' => 'v1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '7e279d2cd5d7fbb156ce46daada972355cea27bb',
+    ),
+    'phpoption/phpoption' => 
+    array (
+      'pretty_version' => '1.7.5',
+      'version' => '1.7.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '994ecccd8f3283ecf5ac33254543eb0ac946d525',
+    ),
+    'symfony/polyfill-ctype' => 
+    array (
+      'pretty_version' => 'v1.20.0',
+      'version' => '1.20.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f4ba089a5b6366e453971d3aad5fe8e897b37f41',
     ),
     'symfony/polyfill-mbstring' => 
     array (
@@ -84,6 +111,15 @@ private static $installed = array (
       array (
         0 => 'v4.5.3',
       ),
+    ),
+    'vlucas/phpdotenv' => 
+    array (
+      'pretty_version' => 'v5.2.0',
+      'version' => '5.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'fba64139db67123c7a57072e5f8d3db10d160b66',
     ),
   ),
 );
