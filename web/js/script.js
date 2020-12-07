@@ -4,8 +4,6 @@ $('.deleteArticle').click(function(){
         title: 'Êtes-vous sur de vouloir supprimer cet article ?',
         icon: 'danger',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Supprimer',
         cancelButtonText: 'Retour'
     }).then((result) => {
@@ -18,12 +16,17 @@ $('.deleteArticle').click(function(){
 
 $('.showArticle').click(function(){
 
-    Swal.fire({
-        title: "<h1>"+$(this).data('title')+"</h1>",
-        text: $(this).data('content'),
-        showCloseButton: false,
-        showCancelButton: false,
-        customClass: 'swal-wide',
-        footer: "<h3>"+ $(this).data('author')+" - "+ $(this).data('date') +"</h3>"
+    var article_id = $(this).data('article');
+
+    $.post( "/searchById", { article_id: article_id }).done(function(data) {
+        result = JSON.parse(data);
+        Swal.fire({
+            title: "<h1>"+result.title+"</h1>",
+            html: result.content,
+            showCloseButton: false,
+            showCancelButton: false,
+            customClass: 'swal-wide',
+            footer: "<h3>"+result.author.nom+" "+result.author.prenom+" - "+result.modifiedAt+"</h3>"
+        });
     });
 });

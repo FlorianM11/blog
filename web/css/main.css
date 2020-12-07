@@ -316,3 +316,8 @@ input[type=text]::placeholder, input[type=password]::placeholder, textarea::plac
 #icon {
     width:30%;
 }
+
+.swal2-html-container {
+    text-align: left;
+}
+

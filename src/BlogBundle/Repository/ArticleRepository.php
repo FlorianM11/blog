@@ -12,17 +12,27 @@ class ArticleRepository
         $this->_db = DbHandler::getDb();
     }
 
-    public function findAll($query = null)
+    public function findAll($query = null, Users $author = null)
     {
-        $results = $this->_db->prepare("SELECT *, article.id as id_article, users.id as id_users 
-                                        FROM Article INNER JOIN users ON users.id = article.author_id 
-                                        WHERE article.title like :query
-                                        OR article.category like :query
-                                        OR article.content like :query
-                                        OR users.nom like :query
-                                        OR users.prenom like :query 
-                                        ORDER BY modifiedAt DESC");
-        $results->execute([':query' => '%'.$query.'%']);
+        $sql = "SELECT *, article.id as id_article, users.id as id_users 
+                FROM Article INNER JOIN users ON users.id = article.author_id ";
+
+        if ($author !== null){
+            $sql .= "WHERE article.author_id = :author ";
+        }
+
+        $sql .= "AND (article.title like :query
+                OR article.category like :query
+                OR article.content like :query
+                OR users.nom like :query
+                OR users.prenom like :query) 
+                ORDER BY modifiedAt DESC";
+
+        $results = $this->_db->prepare($sql);
+        $results->execute([
+            ':query' => '%'.$query.'%',
+            ':author' => $author !== null ? $author->getId() : null
+        ]);
 
         $articles_from_table = $results->fetchAll();
 
@@ -31,7 +41,6 @@ class ArticleRepository
             $articleObj->setId($article['id_article']);
             $articles[] = $articleObj;
         }
-
         return $articles;
     }
 
@@ -130,20 +139,29 @@ class ArticleRepository
         return false;
     }
 
-    public function findOneById($id, Users $author)
+    public function findOneById($id, Users $author = null)
     {
-        $results = $this->_db->prepare("SELECT *, article.id as id_article, users.id as id_users 
-                                        FROM Article INNER JOIN users ON users.id = article.author_id 
-                                        WHERE article.id = :id AND article.author_id = :author_id");
-        $results->execute([
-            ':id' => $id,
-            ':author_id' => $author->getId()
-        ]);
 
+        $sql = "SELECT *, article.id as id_article, users.id as id_users 
+                FROM Article INNER JOIN users ON users.id = article.author_id 
+                WHERE article.id = :id";
+
+        if ($author !== null){
+            $sql .= " AND article.author_id = :author_id";
+            $results = $this->_db->prepare($sql);
+            $results->execute([
+                ':id' => $id,
+                ':author_id' => $author->getId()
+            ]);
+        } else {
+            $results = $this->_db->prepare($sql);
+            $results->execute([
+                ':id' => $id
+            ]);
+        }
         $articles_from_tables = $results->fetchAll();
 
         $count = count($articles_from_tables);
-
         if ($count === 1) {
             return $this->convertToObject($articles_from_tables[0]);
         }

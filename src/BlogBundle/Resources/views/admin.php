@@ -17,7 +17,6 @@
          <thead class="thead-light">
          <tr>
              <th scope="col">Titre</th>
-             <th scope="col">Auteur</th>
              <th scope="col">Catégorie</th>
              <th scope="col">Date de création</th>
              <th scope="col">Date de modification</th>
@@ -28,7 +27,6 @@
          <?php foreach ($attributes['articles'] as $article): ?>
          <tr>
              <th scope="row"><?= $article->getTitle() ?></th>
-             <td><?php echo $article->getAuthor()->getNom().' '.$article->getAuthor()->getPrenom() ?></td>
              <td><?= $article->getCategory() ?></td>
              <td><?= date("d/m/Y", strtotime($article->getCreatedAt())) ?></td>
              <td><?= date("d/m/Y", strtotime($article->getModifiedAt())) ?></td>

@@ -2,32 +2,25 @@
 
 require_once __DIR__ . "/../../src/BlogBundle/Controller/MainController.php";
 
-$request = $_SERVER['REQUEST_URI'];
+$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
 $mainCtrl = new MainController();
 
-if (isset($_GET['id'])){
-    $id = $_GET['id'];
-} else {
-    $id = null;
-}
-
-if (isset($_GET['query'])){
-    $query = $_GET['query'];
-    $home_route = '/?query=';
-} else {
-    $query = null;
-    $home_route = '/';
-}
-
 switch ($request) {
-    case $home_route.$query:
-        $response = $mainCtrl->homeAction();
+    case '/':
+        $response = $mainCtrl->homeAction(isset($_GET['query']) ? $_GET['query'] : null);
         break;
-    case '/searchCat?query='.urlencode($query):
-        $response = $mainCtrl->searchCatAction($query);
+    case '/searchCat':
+        $response = $mainCtrl->searchCatAction(isset($_GET['query']) ? $_GET['query'] : null);
+        break;
+    case '/searchById':
+        $json = $mainCtrl->searchByIdAction($_POST['article_id']);
         break;
     case '/login':
         $response = $mainCtrl->loginAction();
+        break;
+    case '/logout':
+        $response = $mainCtrl->logoutAction();
         break;
     case '/inscription':
         $response = $mainCtrl->inscriptionAction();
@@ -47,14 +40,14 @@ switch ($request) {
     case '/admin':
         $response = $mainCtrl->adminAction();
         break;
-    case '/deleteArticle?id=' . $id:
-        $response = $mainCtrl->deleteArticle($id);
+    case '/deleteArticle':
+        $response = $mainCtrl->deleteArticle($_GET['id']);
         break;
-    case '/editArticle?id=' . $id:
-        $response = $mainCtrl->editArticle($id);
+    case '/editArticle':
+        $response = $mainCtrl->editArticle($_GET['id']);
         break;
-    case '/validateEdit?id=' . $id:
-        $response = $mainCtrl->validateEdit($id);
+    case '/validateEdit':
+        $response = $mainCtrl->validateEdit($_GET['id']);
         break;
     default:
         $response = $mainCtrl->notFoundAction();

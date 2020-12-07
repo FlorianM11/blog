@@ -15,12 +15,19 @@ if (!in_array($request, $urlExclu) && !isset($_SESSION['ROLE'])){
     header("Location: /");
 }
 
-$view = $response['view'];
-if (isset($response['attributes'])) {
-    $attributes = $response['attributes'];
+if (isset($response)){
+    $view = $response['view'];
+
+    if (isset($response['attributes'])) {
+        $attributes = $response['attributes'];
+    }
+
+    require_once "../src/BlogBundle/Resources/template.php";
+
+} else if (isset($json)){
+
+    echo $json;
 }
 
 
-require_once "../src/BlogBundle/Resources/template/header.php";
-require_once $view;
-require_once "../src/BlogBundle/Resources/template/footer.php";
+

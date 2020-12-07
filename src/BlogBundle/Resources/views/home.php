@@ -10,28 +10,34 @@
                 ?>
                 <?php foreach ($attributes['articles'] as $article): ?>
                     <div class="display-article">
-                        <h1><?= $article->getTitle() ?></h1>
+                        <h1 class="text-left"><?= $article->getTitle() ?></h1>
                         <div class="meta-data">
                             <h3 class="author">Auteur: <?php echo $article->getAuthor()->getNom().' '.$article->getAuthor()->getPrenom() ?> -
                                 Catégorie: <?= $article->getCategory() ?> -
                                 Date: <?= date("d/m/Y", strtotime($article->getModifiedAt())) ?></h3>
                             <?php
-                             if (strlen($article->getContent()) > 75){ ?>
-                                 <p><?= substr($article->getContent(), 0, 75);  ?>...</p>
-                                 <button class="showArticle"
-                                         data-title="<?= $article->getTitle() ?>"
-                                         data-content="<?= $article->getContent() ?>"
-                                         data-author="<?= $article->getAuthor()->getNom().' '.$article->getAuthor()->getPrenom() ?>"
-                                         data-date="<?= date("d/m/Y", strtotime($article->getModifiedAt())) ?>"
+                            $articleArray = [];
+                            $authorArray = [];
+                            foreach ((array)$article as $key => $arti){
+                                $articleArray[str_replace("\x00Article\x00", "", $key)] = $arti;
+                            }
 
-                                 >Voir plus</button>
+                            foreach ((array)$articleArray['_author'] as $key => $arti){
+                                $authorArray[str_replace("\x00Users\x00", "", $key)] = $arti;
+                            }
+                            $articleArray['_author'] = $authorArray;
+                             if (strlen($article->getContent()) > 75){ ?>
+                                 <p><?= substr($article->getContent(), 0, 75);  ?>...
+                                     <a href="#" class="showArticle"
+                                            data-article="<?= $article->getId() ?>"
+                                     >Voir plus</a>
+                                 </p>
                             <?php
                              } else { ?>
                                  <p><?= $article->getContent() ?></p>
                             <?php
                              }
                             ?>
-
                         </div>
                     </div>
                     <hr>
@@ -52,6 +58,11 @@
                             <a href="/searchCat?query=<?= urlencode($category['name']) ?>"><?= $category['name'] ?> (<?= $category['count'] ?>)</a>
                         </div>
                     <?php endforeach; ?>
+                    <?php if  (count($attributes['categories']) === 0): ?>
+                        <div class="display-cat">
+                            <a href="#">Aucune catégorie</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/../Repository/ArticleRepository.php';
 require_once __DIR__ . '/../Repository/UsersRepository.php';
+require_once __DIR__ . '/Controller.php';
 
-class MainController
+class MainController extends Controller
 {
     private $path_of_views = __DIR__ . "/../Resources/views";
 
@@ -11,13 +12,18 @@ class MainController
     {
         if (isset($_SESSION['id_user'])){
             $this->user = (new UsersRepository())->findUserById($_SESSION['id_user']);
-            $this->user->setId($_SESSION['id_user']);
+
+            if ($this->user){
+                $this->user->setId($_SESSION['id_user']);
+            } else {
+                header('Location: /logout');
+            }
         }
     }
 
-    public function homeAction()
+    public function homeAction($query = null)
     {
-        $articles = (new ArticleRepository())->findAll();
+        $articles = (new ArticleRepository())->findAll($query);
         $categories = (new ArticleRepository())->findCategory();
 
         $response = array(
@@ -38,6 +44,12 @@ class MainController
         );
 
         return $response;
+    }
+
+    public function logoutAction()
+    {
+        session_destroy();
+        header('Location: /');
     }
 
     public function validationLoginAction()
@@ -95,7 +107,7 @@ class MainController
     public function adminAction()
     {
 
-        $articles = (new ArticleRepository())->findAll();
+        $articles = (new ArticleRepository())->findAll(null, $this->user);
 
         $response = array(
             "view" => $this->path_of_views . "/admin.php",
@@ -185,5 +197,15 @@ class MainController
         );
 
         return $response;
+    }
+
+    public function searchByIdAction($article_id)
+    {
+        $article = (new ArticleRepository())->findOneById($article_id);
+
+        if ($article) {
+            $article->setId($article_id);
+            return $this->returnJson($article, $article->getAuthor());
+        }
     }
 }

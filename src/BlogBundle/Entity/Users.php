@@ -13,7 +13,7 @@ class Users
         $this->_nom = $_nom;
         $this->_prenom = $_prenom;
         $this->_pseudo = $_pseudo;
-        $this->_password = $_password;
+        $this->_password = sha1($_password);
     }
 
     public function getId(): string

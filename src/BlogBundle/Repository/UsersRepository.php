@@ -15,7 +15,7 @@ class UsersRepository
     public function findUser($pseudo, $password)
     {
         $results = $this->_db->prepare("SELECT * FROM Users WHERE pseudo = :pseudo AND password = :password");
-        $results->execute([':pseudo' => $pseudo, ':password' => $password]);
+        $results->execute([':pseudo' => $pseudo, ':password' => sha1($password)]);
 
         $articles_from_tables = $results->fetchAll();
 
