@@ -22,7 +22,7 @@ class UsersRepository
         $count = count($articles_from_tables);
 
         if ($count === 1) {
-            return $articles_from_tables;
+            return $this->convertToObject($articles_from_tables[0]);
         }
 
         return false;
@@ -66,6 +66,9 @@ class UsersRepository
 
     private function convertToObject(array $user)
     {
-        return new Users($user['nom'], $user['prenom'], $user['pseudo'], $user['password']);
+        $userObj = new Users($user['nom'], $user['prenom'], $user['pseudo'], $user['password']);
+        $userObj->setId($user['id']);
+
+        return $userObj;
     }
 }

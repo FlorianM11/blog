@@ -38,7 +38,6 @@ class ArticleRepository
 
         foreach ($articles_from_table as $article){
             $articleObj = $this->convertToObject($article);
-            $articleObj->setId($article['id_article']);
             $articles[] = $articleObj;
         }
         return $articles;
@@ -55,7 +54,6 @@ class ArticleRepository
 
             foreach ($articles_from_table as $article){
                 $articleObj = $this->convertToObject($article);
-                $articleObj->setId($article['id_article']);
                 $articles[] = $articleObj;
             }
 
@@ -75,12 +73,7 @@ class ArticleRepository
 
             return $categories;
         }
-
-
-
-
     }
-
 
     public function deleteArticle($id, Users $author)
     {
@@ -112,11 +105,7 @@ class ArticleRepository
             ':modifiedAt' => $article->getModifiedAt()
         ]);
 
-        if ($result) {
-            return true;
-        }
-
-        return false;
+        return $result? true : false;
     }
 
     public function editArticle(Article $article, Users $author)
@@ -132,16 +121,11 @@ class ArticleRepository
             ':author_id' => $author->getId()
         ]);
 
-        if ($result) {
-            return true;
-        }
-
-        return false;
+        return $result? true : false;
     }
 
     public function findOneById($id, Users $author = null)
     {
-
         $sql = "SELECT *, article.id as id_article, users.id as id_users 
                 FROM Article INNER JOIN users ON users.id = article.author_id 
                 WHERE article.id = :id";
@@ -178,6 +162,8 @@ class ArticleRepository
             $article['password']
         );
 
+        $author->setId($article['author_id']);
+
         $articleObj = new Article(
             $author,
             $article['title'],
@@ -186,6 +172,7 @@ class ArticleRepository
 
         $articleObj->setModifiedAt($article['modifiedAt']);
         $articleObj->setCreatedAt($article['createdAt']);
+        $articleObj->setId($article['id']);
 
         return $articleObj;
     }

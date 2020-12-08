@@ -8,15 +8,20 @@ class MainController extends Controller
 {
     private $path_of_views = __DIR__ . "/../Resources/views";
 
+    /**
+     * @var false|Users
+     */
+    private $user;
+
     public function __construct()
     {
-        if (isset($_SESSION['id_user'])){
-            $this->user = (new UsersRepository())->findUserById($_SESSION['id_user']);
+        if ($this->sessionExist('id_user')){
+            $this->user = (new UsersRepository())->findUserById($this->getSession('id_user'));
 
             if ($this->user){
-                $this->user->setId($_SESSION['id_user']);
+                $this->user->setId($this->getSession('id_user'));
             } else {
-                header('Location: /logout');
+                return $this->returnRedirect('/logout');
             }
         }
     }
@@ -49,7 +54,7 @@ class MainController extends Controller
     public function logoutAction()
     {
         session_destroy();
-        header('Location: /');
+        return $this->returnRedirect('/');
     }
 
     public function validationLoginAction()
@@ -57,15 +62,15 @@ class MainController extends Controller
         $pseudo = $_POST['pseudo'];
         $password = $_POST['password'];
 
-        $result = (new UsersRepository())->findUser($pseudo, $password);
+        $user = (new UsersRepository())->findUser($pseudo, $password);
 
-        if ($result !== false) {
-            $_SESSION['ROLE'] = 'USER';
-            $_SESSION['id_user'] = $result[0]['id'];
-            header('Location: /');
+        if ($user) {
+            $this->setSession('ROLE', 'USER');
+            $this->setSession('id_user', $user->getId());
+            return $this->returnRedirect('/');
         } else {
-            $_SESSION['error'] = "Les identifiants sont incorrects";
-            header('Location: /login');
+            $this->setSession('error', 'Les identifiants sont incorrects');
+            return $this->returnRedirect('/login');
         }
     }
 
@@ -84,10 +89,10 @@ class MainController extends Controller
         $result = (new UsersRepository())->addUser($newUser);
 
         if ($result === true) {
-            header('Location: /login');
+            return $this->returnRedirect('/login');
         } else {
-            $_SESSION['error'] = "Une erreur est survenue lors de votre inscription";
-            header('Location: /inscription');
+            $this->setSession('error', 'Une erreur est survenue lors de votre inscription');
+            return $this->returnRedirect('/inscription');
         }
     }
 
@@ -97,10 +102,10 @@ class MainController extends Controller
         $result = (new ArticleRepository())->addArticle($newArticle);
 
         if ($result === true) {
-            header('Location: /');
+            return $this->returnRedirect('/');
         } else {
-            $_SESSION['error'] = "Une erreur est survenue lors de l'ajout de votre article";
-            header('Location: /admin');
+            $this->setSession('error', "Une erreur est survenue lors de l'ajout de votre article");
+            return $this->returnRedirect('/admin');
         }
     }
 
@@ -123,12 +128,11 @@ class MainController extends Controller
     {
         $result = (new ArticleRepository())->deleteArticle($id, $this->user);
 
-        if ($result === true) {
-            header('Location: /admin');
-        } else {
-            $_SESSION['error'] = "Une erreur est survenue lors de la suppression de l'article";
-            header('Location: /admin');
+        if ($result === false) {
+            $this->setSession('error', "Une erreur est survenue lors de la suppression de l'article");
         }
+
+        return $this->returnRedirect('/admin');
     }
 
     public function notFoundAction()
@@ -145,7 +149,6 @@ class MainController extends Controller
         $article = (new ArticleRepository())->findOneById($id, $this->user);
 
         if ($article){
-            $article->setId($id);
 
             $response = array(
                 "view" => $this->path_of_views . "/edit_article.php",
@@ -162,16 +165,13 @@ class MainController extends Controller
     {
         $article = new Article($this->user, $_POST['title'], $_POST['category'], $_POST['content']);
 
-        $article->setId($id);
-
         $editArticle = (new ArticleRepository())->editArticle($article, $this->user);
 
-        if ($editArticle === true) {
-            header('Location: /admin');
-        } else {
-            $_SESSION['error'] = "Une erreur est survenue lors de la modification de l'article";
-            header('Location: /admin');
+        if ($editArticle === false) {
+            $this->setSession('error', "Une erreur est survenue lors de la modification de l'article");
         }
+
+        return $this->returnRedirect('/admin');
     }
 
     public function displayFormAddArticle()
@@ -204,7 +204,6 @@ class MainController extends Controller
         $article = (new ArticleRepository())->findOneById($article_id);
 
         if ($article) {
-            $article->setId($article_id);
             return $this->returnJson($article, $article->getAuthor());
         }
     }
